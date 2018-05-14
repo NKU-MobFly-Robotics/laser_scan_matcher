@@ -35,8 +35,8 @@
  *  on Robotics and Automation (ICRA), 2008
  */
 
-#ifndef LASER_SCAN_MATCHER_H
-#define LASER_SCAN_MATCHER_H
+#ifndef LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
+#define LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
 
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
@@ -65,89 +65,87 @@ class LaserScanMatcher
 {
   
 public:
-    LaserScanMatcher();
-    ~LaserScanMatcher();
+  LaserScanMatcher();
+  ~LaserScanMatcher();
 
-    void scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan);
-    bool mapCallback(nav_msgs::GetMap::Request& req, nav_msgs::GetMap::Response& res);
+  void scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan);
+  bool mapCallback(nav_msgs::GetMap::Request& req, nav_msgs::GetMap::Response& res);
   
 private:
-    // Ros handle
-    ros::NodeHandle nh_;
+  // Ros handle
+  ros::NodeHandle nh_;
     
-    message_filters::Subscriber<sensor_msgs::LaserScan>* scan_filter_sub_;
-    tf::MessageFilter<sensor_msgs::LaserScan>* scan_filter_;
+  message_filters::Subscriber<sensor_msgs::LaserScan>* scan_filter_sub_;
+  tf::MessageFilter<sensor_msgs::LaserScan>* scan_filter_;
 
-    tf::TransformListener tf_;
-    tf::TransformBroadcaster* tfB_;
+  tf::TransformListener tf_;
+  tf::TransformBroadcaster* tfB_;
 
-    tf::Transform base_to_laser_; // static, cached
+  tf::Transform base_to_laser_; // static, cached
 
-    // Publisher
-    ros::Publisher sst_; 
-    ros::Publisher sstm_;
-    ros::ServiceServer ss_;
+  // Publisher
+  ros::Publisher sst_; 
+  ros::Publisher sstm_;
+  ros::ServiceServer ss_;
 
-    // Coordinate parameters
-	std::string map_frame_;
-    std::string base_frame_;
-    std::string odom_frame_;
+  // Coordinate parameters
+  std::string map_frame_;
+  std::string base_frame_;
+  std::string odom_frame_;
 
-    // Keyframe parameters
-    double kf_dist_linear_;
-    double kf_dist_linear_sq_;
-    double kf_dist_angular_;
+  // Keyframe parameters
+  double kf_dist_linear_;
+  double kf_dist_linear_sq_;
+  double kf_dist_angular_;
 
-    boost::mutex map_mutex_;
-    boost::mutex map_to_odom_mutex_;
+  boost::mutex map_mutex_;
+  boost::mutex map_to_odom_mutex_;
 
-    bool initialized_;
-    bool got_map_;
+  bool initialized_;
+  bool got_map_;
 
-    tf::Transform f2b_;    // fixed-to-base tf (pose of base frame in fixed frame)
-    tf::Transform f2b_kf_; // pose of the last keyframe scan in fixed frame
+  tf::Transform f2b_;    // fixed-to-base tf (pose of base frame in fixed frame)
+  tf::Transform f2b_kf_; // pose of the last keyframe scan in fixed frame
 
-    tf::Transform odom_to_base_tf;
+  tf::Transform odom_to_base_tf;
 
-    sm_params input_;
-    sm_result output_;
-    LDP prev_ldp_scan_;
+  sm_params input_;
+  sm_result output_;
+  LDP prev_ldp_scan_;
     
-    // Grid map parameters
-    double resolution_; 
+  // Grid map parameters
+  double resolution_;
     
-    // The map will be published / send to service callers
-    nav_msgs::GetMap::Response map_;
-    ros::Duration map_update_interval_;
+  // The map will be published / send to service callers
+  nav_msgs::GetMap::Response map_;
+  ros::Duration map_update_interval_;
     
-    tf::Transform map_to_odom_;
-    boost::thread* transform_thread_;
-	
-	std::map<std::string, LaserRangeFinder*> lasers_;
-	std::map<std::string, bool> lasers_inverted_;
-	bool inverted_laser_;
-	
-	LocalizedRangeScanVector allScans_;
+  tf::Transform map_to_odom_;
+  boost::thread* transform_thread_;
 
-    // Methods
-    bool processScan(LaserRangeFinder* laser, const sensor_msgs::LaserScan::ConstPtr& scan);
-    void laserScanToLDP(const sensor_msgs::LaserScan::ConstPtr& scan, LDP& ldp);
-	void createTfFromXYTheta(double x, double y, double theta, tf::Transform& t);
+  std::map<std::string, LaserRangeFinder*> lasers_;
+  std::map<std::string, bool> lasers_inverted_;
+  bool inverted_laser_;
 
-    bool newKeyframeNeeded(const tf::Transform& d);
+  LocalizedRangeScanVector allScans_;
 
-    void publishTransform();  
-    void publishLoop(double transform_publish_period);
-	
-	bool getOdomPose(tf::Transform& odom_to_base_tf, const ros::Time& t);
-	LaserRangeFinder* getLaser(const sensor_msgs::LaserScan::ConstPtr& scan);
-	LocalizedRangeScan* addScan(LaserRangeFinder* laser,
-				const sensor_msgs::LaserScan::ConstPtr& scan,
-				const tf::Transform& odom_to_base_tf);
-	bool updateMap();
-	
-};  // class LaserScanMatcher
+  // Methods
+  bool processScan(LaserRangeFinder* laser, const sensor_msgs::LaserScan::ConstPtr& scan);
+  void laserScanToLDP(const sensor_msgs::LaserScan::ConstPtr& scan, LDP& ldp);
+  void createTfFromXYTheta(double x, double y, double theta, tf::Transform& t);
+
+  bool newKeyframeNeeded(const tf::Transform& d);
+
+  void publishTransform();  
+  void publishLoop(double transform_publish_period);
+
+  bool getOdomPose(tf::Transform& odom_to_base_tf, const ros::Time& t);
+  LaserRangeFinder* getLaser(const sensor_msgs::LaserScan::ConstPtr& scan);
+  LocalizedRangeScan* addScan(LaserRangeFinder* laser, const sensor_msgs::LaserScan::ConstPtr& scan, const tf::Transform& odom_to_base_tf);
+  bool updateMap();
+
+}; // LaserScanMatcher
 
 }  // namespace scan_tools
 
-#endif
+#endif // LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
