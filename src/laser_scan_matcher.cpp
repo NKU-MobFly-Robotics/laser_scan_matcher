@@ -37,8 +37,6 @@
 
 #include <laser_scan_matcher/laser_scan_matcher.h>
 
-FILE * poseFile = std::fopen("/home/wenjian/Experiment/plicp_pose.txt", "w+");
-
 namespace scan_tools 
 {
 
@@ -690,10 +688,7 @@ bool LaserScanMatcher::mapCallback(nav_msgs::GetMap::Request& req, nav_msgs::Get
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "LaserScanMatcher");
-
   scan_tools::LaserScanMatcher laser_scan_matcher;
-  
   ros::spin();
-  
   return 0;
 }

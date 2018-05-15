@@ -1501,7 +1501,6 @@ private:
  */
 typedef std::vector<double> RangeReadingsVector;
 
-
 /**
  * LaserRangeScan representing the range readings from a laser range finder sensor.
  */

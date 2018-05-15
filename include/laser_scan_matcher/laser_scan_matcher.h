@@ -63,7 +63,6 @@ namespace scan_tools
 
 class LaserScanMatcher
 {
-  
 public:
   LaserScanMatcher();
   ~LaserScanMatcher();
@@ -143,7 +142,7 @@ private:
   LaserRangeFinder* getLaser(const sensor_msgs::LaserScan::ConstPtr& scan);
   LocalizedRangeScan* addScan(LaserRangeFinder* laser, const sensor_msgs::LaserScan::ConstPtr& scan, const tf::Transform& odom_to_base_tf);
   bool updateMap();
-
+  
 }; // LaserScanMatcher
 
 }  // namespace scan_tools
