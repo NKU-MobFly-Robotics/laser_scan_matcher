@@ -177,25 +177,7 @@ namespace scan_tools
     {
       return static_cast<T> ((value + (alignValue - 1)) & ~(alignValue - 1));
     }
-
-    /**
-     * Calculate the distance of point (x, y) to line Ax+By+C=0
-     * @param a
-     * @param b
-     * @param c
-     * @param x
-     * @param y
-     * @return point to line distance
-     */
-    inline double PointToLineDist(double a, double b, double c, double x, double y)
-    {
-      double distance;
-      distance = fabs(a * x + b * y + c) / sqrt(a * a + b * b);
-      return distance;
-    }
-
   }  // namespace math
-
 } // namespace scan_tools
 
 #endif // LASER_SCAN_MATCHER_MATH_H_
