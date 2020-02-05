@@ -27,5 +27,5 @@ link_directories(${csm_LIBRARY_DIRS})
 catkin_package()
 
 #Create node
-add_executable(laser_scan_matcher_node src/laser_scan_matcher.cpp)
-target_link_libraries(laser_scan_matcher_node ${catkin_LIBRARIES} ${csm_LIBRARIES})
+add_executable(${PROJECT_NAME}_node src/laser_scan_matcher.cpp)
+target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${csm_LIBRARIES})
