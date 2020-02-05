@@ -38,15 +38,15 @@
 #ifndef LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
 #define LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
 
+#include "message_filters/subscriber.h"
+#include "nav_msgs/GetMap.h"
+#include "nav_msgs/OccupancyGrid.h"
 #include "ros/ros.h"
 #include "sensor_msgs/LaserScan.h"
-#include "message_filters/subscriber.h"
 #include "tf/message_filter.h"
+#include "tf/transform_broadcaster.h"
 #include "tf/transform_datatypes.h"
 #include "tf/transform_listener.h"
-#include "tf/transform_broadcaster.h"
-#include "nav_msgs/OccupancyGrid.h"
-#include "nav_msgs/GetMap.h"
 
 #include <csm/csm_all.h>  // csm defines min and max, but Eigen complains
 #include <boost/thread.hpp>
@@ -58,32 +58,31 @@
 
 #define MAP_IDX(sx, i, j) (sx * j + i)
 
-namespace scan_tools
-{
+namespace scan_tools {
 
-class LaserScanMatcher
-{
-public:
+class LaserScanMatcher {
+ public:
   LaserScanMatcher();
   ~LaserScanMatcher();
 
-  void scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan);
-  bool mapCallback(nav_msgs::GetMap::Request& req, nav_msgs::GetMap::Response& res);
-  
-private:
+  void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan);
+  bool mapCallback(nav_msgs::GetMap::Request& req,
+                   nav_msgs::GetMap::Response& res);
+
+ private:
   // Ros handle
   ros::NodeHandle nh_;
-    
+
   message_filters::Subscriber<sensor_msgs::LaserScan>* scan_filter_sub_;
   tf::MessageFilter<sensor_msgs::LaserScan>* scan_filter_;
 
   tf::TransformListener tf_;
   tf::TransformBroadcaster* tfB_;
 
-  tf::Transform base_to_laser_; // static, cached
+  tf::Transform base_to_laser_;  // static, cached
 
   // Publisher
-  ros::Publisher sst_; 
+  ros::Publisher sst_;
   ros::Publisher sstm_;
   ros::ServiceServer ss_;
 
@@ -103,22 +102,22 @@ private:
   bool initialized_;
   bool got_map_;
 
-  tf::Transform f2b_;    // fixed-to-base tf (pose of base frame in fixed frame)
-  tf::Transform f2b_kf_; // pose of the last keyframe scan in fixed frame
+  tf::Transform f2b_;  // fixed-to-base tf (pose of base frame in fixed frame)
+  tf::Transform f2b_kf_;  // pose of the last keyframe scan in fixed frame
 
   tf::Transform odom_to_base_tf;
 
   sm_params input_;
   sm_result output_;
   LDP prev_ldp_scan_;
-    
+
   // Grid map parameters
   double resolution_;
-    
+
   // The map will be published / send to service callers
   nav_msgs::GetMap::Response map_;
   ros::Duration map_update_interval_;
-    
+
   tf::Transform map_to_odom_;
   boost::thread* transform_thread_;
 
@@ -129,22 +128,25 @@ private:
   LocalizedRangeScanVector allScans_;
 
   // Methods
-  bool processScan(LaserRangeFinder* laser, const sensor_msgs::LaserScan::ConstPtr& scan);
+  bool processScan(LaserRangeFinder* laser,
+                   const sensor_msgs::LaserScan::ConstPtr& scan);
   void laserScanToLDP(const sensor_msgs::LaserScan::ConstPtr& scan, LDP& ldp);
   void createTfFromXYTheta(double x, double y, double theta, tf::Transform& t);
 
   bool newKeyframeNeeded(const tf::Transform& d);
 
-  void publishTransform();  
+  void publishTransform();
   void publishLoop(double transform_publish_period);
 
   bool getOdomPose(tf::Transform& odom_to_base_tf, const ros::Time& t);
   LaserRangeFinder* getLaser(const sensor_msgs::LaserScan::ConstPtr& scan);
-  LocalizedRangeScan* addScan(LaserRangeFinder* laser, const sensor_msgs::LaserScan::ConstPtr& scan, const tf::Transform& odom_to_base_tf);
+  LocalizedRangeScan* addScan(LaserRangeFinder* laser,
+                              const sensor_msgs::LaserScan::ConstPtr& scan,
+                              const tf::Transform& odom_to_base_tf);
   bool updateMap();
-  
-}; // LaserScanMatcher
+
+};  // LaserScanMatcher
 
 }  // namespace scan_tools
 
-#endif // LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
+#endif  // LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
