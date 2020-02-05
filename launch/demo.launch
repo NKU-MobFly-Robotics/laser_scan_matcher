@@ -12,7 +12,7 @@
     name="laser_scan_matcher_node" output="screen">
 
     <param name="max_iterations" value="10"/>
-	<param name="do_compute_covariance" value="1"/>
+	  <param name="do_compute_covariance" value="1"/>
   </node>
   
   <node pkg="rviz" type="rviz" name="rviz"/>
