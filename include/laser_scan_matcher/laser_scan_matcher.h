@@ -35,18 +35,18 @@
  *  on Robotics and Automation (ICRA), 2008
  */
 
-#ifndef LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
-#define LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
+#ifndef LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H
+#define LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H
 
-#include "message_filters/subscriber.h"
-#include "nav_msgs/GetMap.h"
-#include "nav_msgs/OccupancyGrid.h"
-#include "ros/ros.h"
-#include "sensor_msgs/LaserScan.h"
-#include "tf/message_filter.h"
-#include "tf/transform_broadcaster.h"
-#include "tf/transform_datatypes.h"
-#include "tf/transform_listener.h"
+#include <message_filters/subscriber.h>
+#include <nav_msgs/GetMap.h>
+#include <nav_msgs/OccupancyGrid.h>
+#include <ros/ros.h>
+#include <sensor_msgs/LaserScan.h>
+#include <tf/message_filter.h>
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_datatypes.h>
+#include <tf/transform_listener.h>
 
 #include <csm/csm_all.h>  // csm defines min and max, but Eigen complains
 #include <boost/thread.hpp>
@@ -149,4 +149,4 @@ class LaserScanMatcher {
 
 }  // namespace scan_tools
 
-#endif  // LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H_
+#endif  // LASER_SCAN_MATCHER_LASER_SCAN_MATCHER_H

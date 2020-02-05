@@ -1,5 +1,22 @@
-#ifndef LASER_SCAN_MATCHER_MATH_H_
-#define LASER_SCAN_MATCHER_MATH_H_
+/*
+ * Copyright 2010 SRI International
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef LASER_SCAN_MATCHER_MATH_H
+#define LASER_SCAN_MATCHER_MATH_H
 
 #include <assert.h>
 #include <cmath>
@@ -160,4 +177,4 @@ inline T AlignValue(size_t value, size_t alignValue = 8) {
 }  // namespace math
 }  // namespace scan_tools
 
-#endif  // LASER_SCAN_MATCHER_MATH_H_
+#endif  // LASER_SCAN_MATCHER_MATH_H
