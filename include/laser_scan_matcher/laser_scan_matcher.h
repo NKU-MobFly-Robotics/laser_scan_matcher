@@ -58,18 +58,18 @@
 
 #define MAP_IDX(sx, i, j) (sx * j + i)
 
-namespace scan_tools {
-
-class LaserScanMatcher {
- public:
+namespace scan_tools
+{
+class LaserScanMatcher
+{
+public:
   LaserScanMatcher();
   ~LaserScanMatcher();
 
   void scanCallback(const sensor_msgs::LaserScan::ConstPtr& scan);
-  bool mapCallback(nav_msgs::GetMap::Request& req,
-                   nav_msgs::GetMap::Response& res);
+  bool mapCallback(nav_msgs::GetMap::Request& req, nav_msgs::GetMap::Response& res);
 
- private:
+private:
   // Ros handle
   ros::NodeHandle nh_;
 
@@ -102,7 +102,7 @@ class LaserScanMatcher {
   bool initialized_;
   bool got_map_;
 
-  tf::Transform f2b_;  // fixed-to-base tf (pose of base frame in fixed frame)
+  tf::Transform f2b_;     // fixed-to-base tf (pose of base frame in fixed frame)
   tf::Transform f2b_kf_;  // pose of the last keyframe scan in fixed frame
 
   tf::Transform odom_to_base_tf;
@@ -128,8 +128,7 @@ class LaserScanMatcher {
   LocalizedRangeScanVector allScans_;
 
   // Methods
-  bool processScan(LaserRangeFinder* laser,
-                   const sensor_msgs::LaserScan::ConstPtr& scan);
+  bool processScan(LaserRangeFinder* laser, const sensor_msgs::LaserScan::ConstPtr& scan);
   void laserScanToLDP(const sensor_msgs::LaserScan::ConstPtr& scan, LDP& ldp);
   void createTfFromXYTheta(double x, double y, double theta, tf::Transform& t);
 
@@ -140,8 +139,7 @@ class LaserScanMatcher {
 
   bool getOdomPose(tf::Transform& odom_to_base_tf, const ros::Time& t);
   LaserRangeFinder* getLaser(const sensor_msgs::LaserScan::ConstPtr& scan);
-  LocalizedRangeScan* addScan(LaserRangeFinder* laser,
-                              const sensor_msgs::LaserScan::ConstPtr& scan,
+  LocalizedRangeScan* addScan(LaserRangeFinder* laser, const sensor_msgs::LaserScan::ConstPtr& scan,
                               const tf::Transform& odom_to_base_tf);
   bool updateMap();
 
