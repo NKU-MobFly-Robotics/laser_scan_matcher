@@ -23,7 +23,8 @@
 #include <cstddef>
 #include <limits>
 
-namespace scan_tools {
+namespace scan_tools
+{
 /**
  * Enumerated type for valid grid cell states
  */
@@ -45,20 +46,27 @@ const double KT_180_PI = 57.29577951308232087685;  // 180 / PI
  */
 const double KT_TOLERANCE = 1e-06;
 
-namespace math {
+namespace math
+{
 /**
  * Converts degrees into radians
  * @param degrees
  * @return radian equivalent of degrees
  */
-inline double DegreesToRadians(double degrees) { return degrees * KT_PI_180; }
+inline double DegreesToRadians(double degrees)
+{
+  return degrees * KT_PI_180;
+}
 
 /**
  * Converts radians into degrees
  * @param radians
  * @return degree equivalent of radians
  */
-inline double RadiansToDegrees(double radians) { return radians * KT_180_PI; }
+inline double RadiansToDegrees(double radians)
+{
+  return radians * KT_180_PI;
+}
 
 /**
  * Square function
@@ -66,7 +74,8 @@ inline double RadiansToDegrees(double radians) { return radians * KT_180_PI; }
  * @return square of value
  */
 template <typename T>
-inline T Square(T value) {
+inline T Square(T value)
+{
   return (value * value);
 }
 
@@ -75,7 +84,8 @@ inline T Square(T value) {
  * @param value
  * @return rounds value to the nearest whole number (as double)
  */
-inline double Round(double value) {
+inline double Round(double value)
+{
   return value >= 0.0 ? floor(value + 0.5) : ceil(value - 0.5);
 }
 
@@ -86,7 +96,8 @@ inline double Round(double value) {
  * @return the lesser of value1 and value2
  */
 template <typename T>
-inline const T& Minimum(const T& value1, const T& value2) {
+inline const T& Minimum(const T& value1, const T& value2)
+{
   return value1 < value2 ? value1 : value2;
 }
 
@@ -97,7 +108,8 @@ inline const T& Minimum(const T& value1, const T& value2) {
  * @return the greater of value1 and value2
  */
 template <typename T>
-inline const T& Maximum(const T& value1, const T& value2) {
+inline const T& Maximum(const T& value1, const T& value2)
+{
   return value1 > value2 ? value1 : value2;
 }
 
@@ -109,7 +121,8 @@ inline const T& Maximum(const T& value1, const T& value2) {
  * @return the clipped value
  */
 template <typename T>
-inline const T& Clip(const T& n, const T& minValue, const T& maxValue) {
+inline const T& Clip(const T& n, const T& minValue, const T& maxValue)
+{
   return Minimum(Maximum(n, minValue), maxValue);
 }
 
@@ -119,7 +132,8 @@ inline const T& Clip(const T& n, const T& minValue, const T& maxValue) {
  * @param b
  * @return true if a and b differ by at most a certain tolerance.
  */
-inline bool DoubleEqual(double a, double b) {
+inline bool DoubleEqual(double a, double b)
+{
   double delta = a - b;
   return delta < 0.0 ? delta >= -KT_TOLERANCE : delta <= KT_TOLERANCE;
 }
@@ -130,7 +144,8 @@ inline bool DoubleEqual(double a, double b) {
  * @param maximum
  */
 template <typename T>
-inline bool IsUpTo(const T& value, const T& maximum) {
+inline bool IsUpTo(const T& value, const T& maximum)
+{
   return (value >= 0 && value < maximum);
 }
 
@@ -141,7 +156,8 @@ inline bool IsUpTo(const T& value, const T& maximum) {
  * @param b
  */
 template <typename T>
-inline bool InRange(const T& value, const T& a, const T& b) {
+inline bool InRange(const T& value, const T& a, const T& b)
+{
   return (value >= a && value <= b);
 }
 
@@ -150,11 +166,14 @@ inline bool InRange(const T& value, const T& a, const T& b) {
  * @param angle to be normalized
  * @return normalized angle
  */
-inline double NormalizeAngle(double angle) {
-  while (angle > KT_PI) {
+inline double NormalizeAngle(double angle)
+{
+  while (angle > KT_PI)
+  {
     angle -= KT_2PI;
   }
-  while (angle <= -KT_PI) {
+  while (angle <= -KT_PI)
+  {
     angle += KT_2PI;
   }
 
@@ -171,7 +190,8 @@ inline double NormalizeAngle(double angle) {
  * @return aligned value
  */
 template <class T>
-inline T AlignValue(size_t value, size_t alignValue = 8) {
+inline T AlignValue(size_t value, size_t alignValue = 8)
+{
   return static_cast<T>((value + (alignValue - 1)) & ~(alignValue - 1));
 }
 }  // namespace math
