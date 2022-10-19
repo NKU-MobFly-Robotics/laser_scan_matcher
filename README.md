@@ -3,10 +3,10 @@ This repo is the implementation of Point-to-Line Iterative Closest Point (PL-ICP
 
 ## How to use on Ubuntu?
     1. This package has been tested well in Ubuntu 16.04 with ROS Kinetic.
-    
+
     2. If you want to use it, you must install csm first:
         $ sudo apt-get install ros-kinetic-csm
-        
+
     3. Clone the repo to your workspace and complie it
         $ cd ~/catkin_ws/src/
         $ git clone https://github.com/nkuwenjian/laser_scan_matcher.git
