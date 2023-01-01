@@ -29,7 +29,7 @@ IncludeCategories:
   # Protobuf Files
   - Regex:       '\.pb\.h'
     Priority:    6
-  # Apollo libs
+  # laser_scan_matcher libs
   - Regex:       '^"(laser_scan_matcher)'
     Priority:    7
   # The rest

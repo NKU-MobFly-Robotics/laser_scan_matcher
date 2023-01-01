@@ -55,7 +55,7 @@
 #undef min
 #undef max
 
-#include "laser_scan_matcher/Math.h"
+#include "laser_scan_matcher/karto_math.h"
 #include "laser_scan_matcher/karto_tools.h"
 
 #define MAP_IDX(sx, i, j) (sx * j + i)

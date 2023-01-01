@@ -37,7 +37,7 @@
 
 #include <boost/thread.hpp>
 
-#include "laser_scan_matcher/Math.h"
+#include "laser_scan_matcher/karto_math.h"
 
 namespace scan_tools {
 /**
@@ -1272,7 +1272,7 @@ class LaserRangeScan {
    */
   void SetRangeReadings(const RangeReadingsVector& rRangeReadings) {
     if (!rRangeReadings.empty()) {
-      if (rRangeReadings.size() != m_NumberOfRangeReadings) {
+      if (static_cast<int>(rRangeReadings.size()) != m_NumberOfRangeReadings) {
         // delete old readings
         delete[] m_pRangeReadings;
 
@@ -1589,8 +1589,8 @@ class LocalizedRangeScan : public LaserRangeScan {
   LocalizedRangeScan(LaserRangeFinder* pLaserRangeFinder,
                      const RangeReadingsVector& rReadings)
       : LaserRangeScan(rReadings),
-        m_pLaserRangeFinder(pLaserRangeFinder),
-        m_IsDirty(true) {
+        m_IsDirty(true),
+        m_pLaserRangeFinder(pLaserRangeFinder) {
     SetLocalPointReadings();
   }
 
@@ -2660,7 +2660,8 @@ class ScanManager {
     // far from end of vector
     double squaredDistance =
         frontScanPose.GetPosition().SquaredDistance(backScanPose.GetPosition());
-    while (m_RunningScans.size() > m_RunningBufferMaximumSize ||
+    while (static_cast<int>(m_RunningScans.size()) >
+               m_RunningBufferMaximumSize ||
            squaredDistance >
                math::Square(m_RunningBufferMaximumDistance) - KT_TOLERANCE) {
       // remove front of running scans
