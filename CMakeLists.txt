@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 2.8.3)
 project(laser_scan_matcher)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra")
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS

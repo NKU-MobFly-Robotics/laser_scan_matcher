@@ -37,29 +37,42 @@
 
 #include "laser_scan_matcher/laser_scan_matcher.h"
 
+#include "laser_scan_matcher/util.h"
+
 namespace scan_tools {
 LaserScanMatcher::LaserScanMatcher() : initialized_(false), got_map_(false) {
   // Initiate parameters
   map_to_odom_.setIdentity();
   ros::NodeHandle nh_private_("~");
-  if (!nh_private_.getParam("base_frame", base_frame_))
+  if (!nh_private_.getParam("base_frame", base_frame_)) {
     base_frame_ = "base_link";
-  if (!nh_private_.getParam("odom_frame", odom_frame_)) odom_frame_ = "odom";
-  if (!nh_private_.getParam("map_frame", map_frame_)) map_frame_ = "map";
+  }
+  if (!nh_private_.getParam("odom_frame", odom_frame_)) {
+    odom_frame_ = "odom";
+  }
+  if (!nh_private_.getParam("map_frame", map_frame_)) {
+    map_frame_ = "map";
+  }
 
   // Keyframe params: when to generate the keyframe scan.
   // If either is set to 0, reduces to frame-to-frame matching
 
-  if (!nh_private_.getParam("kf_dist_linear", kf_dist_linear_))
-    kf_dist_linear_ = 0.10;
-  if (!nh_private_.getParam("kf_dist_angular", kf_dist_angular_))
+  if (!nh_private_.getParam("kf_dist_linear", kf_dist_linear_)) {
+    kf_dist_linear_ = 0.1;
+  }
+  if (!nh_private_.getParam("kf_dist_angular", kf_dist_angular_)) {
     kf_dist_angular_ = 10.0 * (M_PI / 180.0);
+  }
 
   kf_dist_linear_sq_ = kf_dist_linear_ * kf_dist_linear_;
 
-  if (!nh_private_.getParam("resolution", resolution_)) resolution_ = 0.025;
+  if (!nh_private_.getParam("resolution", resolution_)) {
+    resolution_ = 0.025;
+  }
   double tmp;
-  if (!nh_private_.getParam("map_update_interval", tmp)) tmp = 5.0;
+  if (!nh_private_.getParam("map_update_interval", tmp)) {
+    tmp = 5.0;
+  }
   map_update_interval_.fromSec(tmp);
 
   double transform_publish_period;
@@ -71,82 +84,102 @@ LaserScanMatcher::LaserScanMatcher() : initialized_(false), got_map_(false) {
 
   // Maximum angular displacement between scans
   if (!nh_private_.getParam("max_angular_correction_deg",
-                            input_.max_angular_correction_deg))
+                            input_.max_angular_correction_deg)) {
     input_.max_angular_correction_deg = 45.0;
+  }
 
   // Maximum translation between scans (m)
   if (!nh_private_.getParam("max_linear_correction",
-                            input_.max_linear_correction))
-    input_.max_linear_correction = 0.50;
+                            input_.max_linear_correction)) {
+    input_.max_linear_correction = 0.5;
+  }
 
   // Maximum ICP cycle iterations
-  if (!nh_private_.getParam("max_iterations", input_.max_iterations))
+  if (!nh_private_.getParam("max_iterations", input_.max_iterations)) {
     input_.max_iterations = 10;
+  }
 
   // A threshold for stopping (m)
-  if (!nh_private_.getParam("epsilon_xy", input_.epsilon_xy))
+  if (!nh_private_.getParam("epsilon_xy", input_.epsilon_xy)) {
     input_.epsilon_xy = 0.000001;
+  }
 
   // A threshold for stopping (rad)
-  if (!nh_private_.getParam("epsilon_theta", input_.epsilon_theta))
+  if (!nh_private_.getParam("epsilon_theta", input_.epsilon_theta)) {
     input_.epsilon_theta = 0.000001;
+  }
 
   // Maximum distance for a correspondence to be valid
   if (!nh_private_.getParam("max_correspondence_dist",
-                            input_.max_correspondence_dist))
+                            input_.max_correspondence_dist)) {
     input_.max_correspondence_dist = 0.3;
+  }
 
   // Noise in the scan (m)
-  if (!nh_private_.getParam("sigma", input_.sigma)) input_.sigma = 0.010;
+  if (!nh_private_.getParam("sigma", input_.sigma)) {
+    input_.sigma = 0.01;
+  }
 
   // Use smart tricks for finding correspondences.
-  if (!nh_private_.getParam("use_corr_tricks", input_.use_corr_tricks))
+  if (!nh_private_.getParam("use_corr_tricks", input_.use_corr_tricks)) {
     input_.use_corr_tricks = 1;
+  }
 
   // Restart: Restart if error is over threshold
-  if (!nh_private_.getParam("restart", input_.restart)) input_.restart = 0;
+  if (!nh_private_.getParam("restart", input_.restart)) {
+    input_.restart = 0;
+  }
 
   // Restart: Threshold for restarting
   if (!nh_private_.getParam("restart_threshold_mean_error",
-                            input_.restart_threshold_mean_error))
+                            input_.restart_threshold_mean_error)) {
     input_.restart_threshold_mean_error = 0.01;
+  }
 
   // Restart: displacement for restarting. (m)
-  if (!nh_private_.getParam("restart_dt", input_.restart_dt))
+  if (!nh_private_.getParam("restart_dt", input_.restart_dt)) {
     input_.restart_dt = 1.0;
+  }
 
   // Restart: displacement for restarting. (rad)
-  if (!nh_private_.getParam("restart_dtheta", input_.restart_dtheta))
+  if (!nh_private_.getParam("restart_dtheta", input_.restart_dtheta)) {
     input_.restart_dtheta = 0.1;
+  }
 
   // Max distance for staying in the same clustering
   if (!nh_private_.getParam("clustering_threshold",
-                            input_.clustering_threshold))
+                            input_.clustering_threshold)) {
     input_.clustering_threshold = 0.25;
+  }
 
   // Number of neighbour rays used to estimate the orientation
   if (!nh_private_.getParam("orientation_neighbourhood",
-                            input_.orientation_neighbourhood))
+                            input_.orientation_neighbourhood)) {
     input_.orientation_neighbourhood = 20;
+  }
 
   // If 0, it's vanilla ICP
   if (!nh_private_.getParam("use_point_to_line_distance",
-                            input_.use_point_to_line_distance))
+                            input_.use_point_to_line_distance)) {
     input_.use_point_to_line_distance = 1;
+  }
 
   // Discard correspondences based on the angles
-  if (!nh_private_.getParam("do_alpha_test", input_.do_alpha_test))
+  if (!nh_private_.getParam("do_alpha_test", input_.do_alpha_test)) {
     input_.do_alpha_test = 0;
+  }
 
   // Discard correspondences based on the angles - threshold angle, in degrees
   if (!nh_private_.getParam("do_alpha_test_thresholdDeg",
-                            input_.do_alpha_test_thresholdDeg))
+                            input_.do_alpha_test_thresholdDeg)) {
     input_.do_alpha_test_thresholdDeg = 20.0;
+  }
 
   // Percentage of correspondences to consider: if 0.9,
   // always discard the top 10% of correspondences with more error
-  if (!nh_private_.getParam("outliers_maxPerc", input_.outliers_maxPerc))
-    input_.outliers_maxPerc = 0.90;
+  if (!nh_private_.getParam("outliers_maxPerc", input_.outliers_maxPerc)) {
+    input_.outliers_maxPerc = 0.9;
+  }
 
   // Parameters describing a simple adaptive algorithm for discarding.
   //  1) Order the errors.
@@ -157,12 +190,14 @@ LaserScanMatcher::LaserScanMatcher() : initialized_(false), got_map_(false) {
   //  4) Discard correspondences over the threshold.
   //  This is useful to be conservative; yet remove the biggest errors.
   if (!nh_private_.getParam("outliers_adaptive_order",
-                            input_.outliers_adaptive_order))
+                            input_.outliers_adaptive_order)) {
     input_.outliers_adaptive_order = 0.7;
+  }
 
   if (!nh_private_.getParam("outliers_adaptive_mult",
-                            input_.outliers_adaptive_mult))
+                            input_.outliers_adaptive_mult)) {
     input_.outliers_adaptive_mult = 2.0;
+  }
 
   // If you already have a guess of the solution, you can compute the polar
   // angle
@@ -171,35 +206,42 @@ LaserScanMatcher::LaserScanMatcher() : initialized_(false), got_map_(false) {
   // function of the readings index, it means that the surface is not visible in
   // the
   // next position. If it is not visible, then we don't use it for matching.
-  if (!nh_private_.getParam("do_visibility_test", input_.do_visibility_test))
+  if (!nh_private_.getParam("do_visibility_test", input_.do_visibility_test)) {
     input_.do_visibility_test = 0;
+  }
 
   // no two points in laser_sens can have the same corr.
   if (!nh_private_.getParam("outliers_remove_doubles",
-                            input_.outliers_remove_doubles))
+                            input_.outliers_remove_doubles)) {
     input_.outliers_remove_doubles = 1;
+  }
 
   // If 1, computes the covariance of ICP using the method
   // http://purl.org/censi/2006/icpcov
   if (!nh_private_.getParam("do_compute_covariance",
-                            input_.do_compute_covariance))
+                            input_.do_compute_covariance)) {
     input_.do_compute_covariance = 0;
+  }
 
   // Checks that find_correspondences_tricks gives the right answer
-  if (!nh_private_.getParam("debug_verify_tricks", input_.debug_verify_tricks))
+  if (!nh_private_.getParam("debug_verify_tricks",
+                            input_.debug_verify_tricks)) {
     input_.debug_verify_tricks = 0;
+  }
 
   // If 1, the field 'true_alpha' (or 'alpha') in the first scan is used to
   // compute the
   // incidence beta, and the factor (1/cos^2(beta)) used to weight the
   // correspondence.");
-  if (!nh_private_.getParam("use_ml_weights", input_.use_ml_weights))
+  if (!nh_private_.getParam("use_ml_weights", input_.use_ml_weights)) {
     input_.use_ml_weights = 0;
+  }
 
   // If 1, the field 'readings_sigma' in the second scan is used to weight the
   // correspondence by 1/sigma^2
-  if (!nh_private_.getParam("use_sigma_weights", input_.use_sigma_weights))
+  if (!nh_private_.getParam("use_sigma_weights", input_.use_sigma_weights)) {
     input_.use_sigma_weights = 0;
+  }
 
   // State variables
 
@@ -237,18 +279,24 @@ LaserScanMatcher::~LaserScanMatcher() {
     transform_thread_->join();
     delete transform_thread_;
   }
-  if (scan_filter_) delete scan_filter_;
-  if (scan_filter_sub_) delete scan_filter_sub_;
+  if (scan_filter_) {
+    delete scan_filter_;
+  }
+  if (scan_filter_sub_) {
+    delete scan_filter_sub_;
+  }
 }
 
 void LaserScanMatcher::publishTransform() {
-  boost::mutex::scoped_lock(map_to_odom_mutex_);
+  boost::mutex::scoped_lock lock(map_to_odom_mutex_);
   tfB_->sendTransform(tf::StampedTransform(map_to_odom_, ros::Time::now(),
                                            map_frame_, odom_frame_));
 }
 
 void LaserScanMatcher::publishLoop(double transform_publish_period) {
-  if (transform_publish_period == 0) return;
+  if (transform_publish_period == 0) {
+    return;
+  }
 
   ros::Rate r(1.0 / transform_publish_period);
   while (ros::ok()) {
@@ -281,13 +329,11 @@ LocalizedRangeScan* LaserScanMatcher::addScan(
   std::vector<double> readings;
 
   if (lasers_inverted_[scan->header.frame_id]) {
-    for (std::vector<float>::const_reverse_iterator it = scan->ranges.rbegin();
-         it != scan->ranges.rend(); ++it) {
+    for (auto it = scan->ranges.rbegin(); it != scan->ranges.rend(); ++it) {
       readings.push_back(*it);
     }
   } else {
-    for (std::vector<float>::const_iterator it = scan->ranges.begin();
-         it != scan->ranges.end(); ++it) {
+    for (auto it = scan->ranges.begin(); it != scan->ranges.end(); ++it) {
       readings.push_back(*it);
     }
   }
@@ -459,7 +505,9 @@ bool LaserScanMatcher::updateMap() {
   OccupancyGrid* occ_grid =
       OccupancyGrid::CreateFromScans(allScans_, resolution_);
 
-  if (!occ_grid) return false;
+  if (!occ_grid) {
+    return false;
+  }
 
   if (!got_map_) {
     map_.map.info.resolution = resolution_;
@@ -526,12 +574,15 @@ bool LaserScanMatcher::updateMap() {
 }
 
 bool LaserScanMatcher::newKeyframeNeeded(const tf::Transform& d) {
-  if (fabs(tf::getYaw(d.getRotation())) > kf_dist_angular_) return true;
+  if (fabs(tf::getYaw(d.getRotation())) > kf_dist_angular_) {
+    return true;
+  }
 
   double x = d.getOrigin().getX();
   double y = d.getOrigin().getY();
-  if (x * x + y * y > kf_dist_linear_sq_) return true;
-
+  if (x * x + y * y > kf_dist_linear_sq_) {
+    return true;
+  }
   return false;
 }
 
@@ -613,7 +664,9 @@ LaserRangeFinder* LaserScanMatcher::getLaser(
     }
 
     bool inverse = lasers_inverted_[scan->header.frame_id] = up.z() <= 0;
-    if (inverse) ROS_INFO("laser is mounted upside-down");
+    if (inverse) {
+      ROS_INFO("laser is mounted upside-down");
+    }
 
     // Create a laser range finder device and copy in data from the first scan
 
@@ -644,13 +697,13 @@ void LaserScanMatcher::createTfFromXYTheta(double x, double y, double theta,
 
 bool LaserScanMatcher::mapCallback(nav_msgs::GetMap::Request& req,
                                    nav_msgs::GetMap::Response& res) {
-  boost::mutex::scoped_lock(map_mutex_);
+  UNUSED(req);
+  boost::mutex::scoped_lock lock(map_mutex_);
   if (got_map_ && map_.map.info.width && map_.map.info.height) {
     res = map_;
     return true;
-  } else {
-    return false;
   }
+  return false;
 }
 
 }  // namespace scan_tools

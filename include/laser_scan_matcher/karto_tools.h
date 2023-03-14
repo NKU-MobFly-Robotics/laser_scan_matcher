@@ -38,6 +38,7 @@
 #include <boost/thread.hpp>
 
 #include "laser_scan_matcher/karto_math.h"
+#include "laser_scan_matcher/util.h"
 
 namespace scan_tools {
 /**
@@ -2472,6 +2473,7 @@ class OccupancyGrid : public Grid<int> {
   virtual bool RayTrace(const Vector2<double>& rWorldFrom,
                         const Vector2<double>& rWorldTo, bool isEndPointValid,
                         bool doUpdate = false) {
+    UNUSED(doUpdate);
     assert(m_pCellPassCnt != nullptr && m_pCellHitsCnt != nullptr);
 
     Vector2<int> gridFrom = m_pCellPassCnt->WorldToGrid(rWorldFrom);
