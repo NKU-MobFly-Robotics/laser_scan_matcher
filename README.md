@@ -10,7 +10,7 @@ This repo is the implementation of Point-to-Line Iterative Closest Point (PL-ICP
     3. Clone the repo to your workspace and complie it
         $ cd ~/catkin_ws/src/
         $ git clone https://github.com/nkuwenjian/laser_scan_matcher.git
-        $ cd ..
+        $ cd ../
         $ catkin_make
         $ source devel/setup.bash
 
